@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Home</title>
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='styles/styles.css') }}"
+    />
+    <script
+      src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.0.1/socket.io.js"
+      integrity="sha512-q/dWJ3kcmjBLU4Qc47E4A9kTB4m3wuTY7vkFJDTZKjTs8jhyGQnaUrxa0Ytd0ssMZhbNua9hE+E7Qv1j+DyZwA=="
+      crossorigin="anonymous"
+    ></script>
+  
+    <script src="{{ url_for('static', filename='scripts/socketio.js') }}"></script>
+  </head>
+  
+  <body>
+    <center>
+      <div style="padding-top: 50px">
+        <div>
+          room id: {{ roomCode }} role: {{ role }}
+          <div>
+            Player 1:{{player1}}
+          </div>
+          <div>
+            Player 2:{{player2}}
+          </div>
+          <div>
+            Stones in pile 1:<span id="pile1"></span>
+          </div>
+          <div>
+            Stones in pile 2:<span id="pile2"></span>
+          </div>
+          <div>
+            Stones in pile 3:<span id="pile3"></span>
+          </div>
+          <form action="/game/{{roomCode}}/declareWinner" method="post">
+            <div>
+              <input
+                type="hidden"
+                id="roomCode"
+                value="{{roomCode}}"
+                name="roomCode"
+              />
+            </div>
+            <div>
+              <input
+                type="hidden"
+                value="{{player1}}"
+                name="player1"
+              />
+            </div>
+            <div>
+              <input
+                type="hidden"
+                value="{{player2}}"
+                name="player2"
+              />
+            </div>
+            <div>
+                <label>Declare winner:</label>
+                <select name="winner" required>
+                    <option value="" disabled selected>---</option>
+                    <option value="player1">Player 1</option>
+                    <option value="player2">Player 2</option>
+            </div>
+            <div>
+              <input
+                type="submit"
+                id="sbt-btn"
+                value="Declare winner"
+              />
+          </form>
+          <div id="info"></div>
+          <div id="last-move"></div>
+          <div id="home" style="display: none;">
+            <a href="/">Back to Home</a>
+          </div>
+        </div>
+      </div>
+    </center>
+    <script>
+      var socket = io.connect(location.protocol + '//' + document.domain + ':' + location.port);
+      pile1 = `{{pile1}}`;
+      pile2 = `{{pile2}}`;
+      pile3 = `{{pile3}}`;
+      turn = `{{turn}}`;
+      document.getElementById("pile1").innerHTML = pile1;
+      document.getElementById("pile2").innerHTML = pile2;
+      document.getElementById("pile3").innerHTML = pile3;
+      socket.on("update-pile", data=>{
+          console.log("update-pile");
+          pile1 =data.pile1;
+          pile2 =data.pile2;
+          pile3 =data.pile3;
+          turn = data.turn;
+          if (turn == 'player1'){
+                old='player2';
+            }
+            else{
+                old='player1';
+            }
+          console.log("turn: "+turn);
+          console.log("role: "+`{{role}}`);
+          document.getElementById("last-move").innerHTML = old+" has removed "+data.stones+" stones from pile "+data.pile;
+          document.getElementById("pile1").innerHTML = pile1;
+          document.getElementById("pile2").innerHTML = pile2;
+          document.getElementById("pile3").innerHTML = pile3;
+          document.getElementById("info").innerHTML = "It is "+turn+"'s turn";
+         
+      });
+
+      gameOver = `{{gameOver}}`;
+      if(gameOver){
+          document.getElementById("info").innerHTML = "Game over "+ `{{winner}}`+" has won the game";
+          document.getElementById("sbt-btn").disabled = true;
+          document.getElementById("sbt-btn").style.backgroundColor = "grey";
+          document.getElementById("sbt-btn").style.cursor = "not-allowed";
+          document.getElementById("home").style.display = "block";
+          document.getElementById("info").style.fontSize = "30px";
+      }
+
+      socket.on("game-over", data=>{
+          console.log("game-over");
+          document.getElementById("info").innerHTML = "Game over "+ data.winner+" has won the game";
+          document.getElementById("sbt-btn").disabled = true;
+          document.getElementById("sbt-btn").style.backgroundColor = "grey";
+          document.getElementById("sbt-btn").style.cursor = "not-allowed";
+          document.getElementById("home").style.display = "block";
+          document.getElementById("info").style.fontSize = "30px";
+
+      });
+      
+  </script>
+  </body>
+</html>

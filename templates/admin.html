@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Home</title>
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='styles/styles.css') }}"
+    />
+    <script
+      src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.0.1/socket.io.js"
+      integrity="sha512-q/dWJ3kcmjBLU4Qc47E4A9kTB4m3wuTY7vkFJDTZKjTs8jhyGQnaUrxa0Ytd0ssMZhbNua9hE+E7Qv1j+DyZwA=="
+      crossorigin="anonymous"
+    ></script>
+
+    <script src="{{ url_for('static', filename='scripts/socketio.js') }}"></script>
+  </head>
+
+  <body>
+    <center>
+      <div style="padding-top: 50px">
+        <div>
+          room id: {{ roomCode }} role: {{ role }}
+          <form action="/game/{{roomCode}}/{{role}}" method="post">
+            <div>
+              <input
+                type="hidden"
+                id="inp"
+                value="{{roomCode}}"
+                name="roomCode"
+              />
+            </div>
+            <div>
+              <input
+                type="number"
+                min="1"
+                name="pile1"
+                placeholder="Number of stones in pile 1"
+                required
+              />
+            </div>
+            <div>
+              <input
+                type="number"
+                min="1"
+                name="pile2"
+                placeholder="Number of stones in pile 2"
+                required
+              />
+            </div>
+            <div>
+              <input
+                type="number"
+                min="1"
+                name="pile3"
+                placeholder="Number of stones in pile 3"
+                required
+              />
+            </div>
+            <div>
+              <input
+                type="number"
+                min="1"
+                name="min"
+                placeholder="Minimum number of stones to take"
+                required
+              />
+            </div>
+            <div>
+              <input
+                type="number"
+                min="1"
+                name="max"
+                placeholder="Maximum number of stones to take"
+                required
+              />
+            </div>
+            <div>
+                <label>Who plays first?:</label>
+                <select name="firstPlayer" required>
+                    <option value="" disabled selected>---</option>
+                    <option value="player1">Player 1</option>
+                    <option value="player2">Player 2</option>
+            </div>
+            <div>
+              <input type="submit" value="Start Game" />
+            </div>
+          </form>
+        </div>
+      </div>
+    </center>
+  </body>
+</html>
