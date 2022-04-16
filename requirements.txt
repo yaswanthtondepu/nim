@@ -30,3 +30,4 @@ tqdm==4.63.1
 Werkzeug==2.0.2
 wrapt==1.13.3
 yapf==0.31.0
+python==3.9
